@@ -1,13 +1,14 @@
 package com.example.miperestoronin.myCrudAppTraining.entity;
 
 import jakarta.persistence.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.Data;
 
 
 @Data
 @Entity
 @Table(name = "users")
-public class User {
+public class UserModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,7 +22,7 @@ public class User {
 
 
     @Column
-    private short age;
+    private Integer age;
 
 
 
