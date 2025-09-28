@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController // ← Обязательно!
-@RequestMapping("users") // ← Путь к API
+@RestController
+@RequestMapping("/users")
 public class UserController {
 
     @Autowired
@@ -20,15 +20,30 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @PostMapping
-    public UserModel createUser(@RequestBody UserModel user) {
-        return userService.createUser(user);
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<UserModel> getUserById(@PathVariable Long id) {
         return userService.getUserById(id)
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public ResponseEntity<UserModel> createUser(@RequestBody UserModel user) {
+        UserModel savedUser = userService.createUser(user);
+        return ResponseEntity.ok(savedUser);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserModel> updateUser(
+            @PathVariable Long id,
+            @RequestBody UserModel userDetails) {
+        UserModel updatedUser = userService.updateUser(id, userDetails);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 }

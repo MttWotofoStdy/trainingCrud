@@ -1,6 +1,8 @@
 // PhoneNumber.java
 package com.example.miperestoronin.myCrudAppTraining.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -16,8 +18,12 @@ public class PhoneNumber {
     @Column(nullable = false)
     private String number;
 
-    // Много номеров → один пользователь (или null)
+
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = true) // ← nullable = true → владелец может отсутствовать
+    @JoinColumn(name = "user_id", nullable = true)
+    @JsonIgnore
     private UserModel user;
+
+
+
 }

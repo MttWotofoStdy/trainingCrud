@@ -1,8 +1,7 @@
-// Email.java
 package com.example.miperestoronin.myCrudAppTraining.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import lombok.Data;
 
 @Data
@@ -15,11 +14,10 @@ public class EmailModel {
     private Long id;
 
     @Column(nullable = false)
-    @Email(message = "Invalid email format")
     private String address;
 
-    // Много email-адресов → один пользователь (или null)
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = true) // ← ВАЖНО: nullable = true
+    @JoinColumn(name = "user_id", nullable = true)
+    @JsonIgnore
     private UserModel user;
 }

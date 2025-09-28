@@ -1,50 +1,59 @@
 package com.example.miperestoronin.myCrudAppTraining.service;
 
+import com.example.miperestoronin.myCrudAppTraining.entity.EmailModel;
+import com.example.miperestoronin.myCrudAppTraining.entity.PhoneNumber;
 import com.example.miperestoronin.myCrudAppTraining.entity.UserModel;
 import com.example.miperestoronin.myCrudAppTraining.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 import java.util.Optional;
 
-
-@Service // Помечаем класс как сервисный компонент Spring
-@Transactional // Управляем транзакциями автоматически
+@Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
-    @Autowired // Внедряем зависимость UserRepository
+    @Autowired
     private UserRepository userRepository;
 
     @Override
     public List<UserModel> getAllUsers() {
-        return userRepository.findAll(); // Получаем всех пользователей из базы данных
-    }
-
-    @Override
-    public Optional<UserModel> getUserById(Long id) {
-        return userRepository.findById(id); // Ищем пользователя по ID
+        return userRepository.findAll();
     }
 
     @Override
     public UserModel createUser(UserModel user) {
-        return userRepository.save(user); // Сохраняем нового пользователя
+        return userRepository.save(user);
     }
 
     @Override
-    public UserModel updateUser(Long id, UserModel userDetails) {
-        // Находим пользователя по ID и обновляем его данные
-        return userRepository.findById(id).map(user -> {
-            user.setName(userDetails.getName());
-            user.setEmail(userDetails.getEmail());
-            user.setAge(userDetails.getAge());
-            return userRepository.save(user);
-        }).orElseThrow(() -> new RuntimeException("UserModel not found with id " + id));
+    public Optional<UserModel> getUserById(Long id) {
+        return userRepository.findById(id);
     }
+
     @Override
     public void deleteUser(Long id) {
-        userRepository.deleteById(id); // Удаляем пользователя по ID
+        userRepository.deleteById(id);
     }
+    @Override
+    public UserModel updateUser(Long id, UserModel userDetails) {
+        return userRepository.findById(id).map(user -> {
+            user.setName(userDetails.getName());
+                      user.setAge(userDetails.getAge());
+
+            // Обновляем телефонные номера (если нужно)
+            if (userDetails.getPhoneNumbers() != null) {
+                user.getPhoneNumbers().clear();
+                for (PhoneNumber phone : userDetails.getPhoneNumbers()) {
+                    phone.setUser(user);
+                    user.getPhoneNumbers().add(phone);
+                }
+            }
+
+            return userRepository.save(user);
+        }).orElseThrow(() -> new RuntimeException("User not found with id " + id));
+    }
+
 }

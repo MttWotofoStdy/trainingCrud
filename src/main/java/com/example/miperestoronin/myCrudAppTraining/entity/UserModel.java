@@ -1,9 +1,11 @@
 
 package com.example.miperestoronin.myCrudAppTraining.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -18,17 +20,19 @@ public class UserModel {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, unique = true)
-    private String primaryEmail;
-
     @Column
     private Integer age;
 
-    // Один пользователь → много email-адресов
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EmailModel> emails;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = true)
+    @JsonIgnore
+    private UserModel user;
 
-    // Один пользователь → много телефонных номеров
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PhoneNumber> phoneNumbers;
+    @OneToMany(mappedBy = "user") // ← имя поля в PhoneNumber
+    private List<PhoneNumber> phoneNumbers = new ArrayList<>();
+
+
+    @OneToMany(mappedBy = "user") // ← имя поля в EmailModel
+    private List<EmailModel> emails = new ArrayList<>();
+
 }
