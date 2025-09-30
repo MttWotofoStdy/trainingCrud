@@ -16,6 +16,7 @@ public class EmailModel {
     @Column(nullable = false)
     private String address;
 
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = true)
     @JsonIgnore

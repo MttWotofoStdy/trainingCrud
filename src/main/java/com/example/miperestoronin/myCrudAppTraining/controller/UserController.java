@@ -1,5 +1,6 @@
 package com.example.miperestoronin.myCrudAppTraining.controller;
 
+import com.example.miperestoronin.myCrudAppTraining.dto.UserDto;
 import com.example.miperestoronin.myCrudAppTraining.entity.UserModel;
 import com.example.miperestoronin.myCrudAppTraining.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +13,11 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping
     public List<UserModel> getAllUsers() {
@@ -29,16 +33,14 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserModel> createUser(@RequestBody UserModel user) {
-        UserModel savedUser = userService.createUser(user);
-        return ResponseEntity.ok(savedUser);
+        UserModel saved = userService.createUser(user);
+        return ResponseEntity.ok(saved);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserModel> updateUser(
-            @PathVariable Long id,
-            @RequestBody UserModel userDetails) {
-        UserModel updatedUser = userService.updateUser(id, userDetails);
-        return ResponseEntity.ok(updatedUser);
+    public ResponseEntity<UserModel> updateUser(@PathVariable Long id, @RequestBody UserModel userDetails) {
+        UserModel updated = userService.updateUser(id, userDetails);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")

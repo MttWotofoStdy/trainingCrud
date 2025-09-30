@@ -6,8 +6,8 @@ import java.util.Optional;
 
 public interface UserService {
     List<UserModel> getAllUsers();
-    UserModel createUser(UserModel user);
     Optional<UserModel> getUserById(Long id);
-    void deleteUser(Long id);
+    UserModel createUser(UserModel user);
     UserModel updateUser(Long id, UserModel userDetails);
+    void deleteUser(Long id);
 }

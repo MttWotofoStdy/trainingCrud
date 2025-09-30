@@ -1,61 +1,59 @@
 package com.example.miperestoronin.myCrudAppTraining.controller;
 
+import com.example.miperestoronin.myCrudAppTraining.dto.CreatePhoneRequest;
+import com.example.miperestoronin.myCrudAppTraining.dto.PhoneNumberDto;
 import com.example.miperestoronin.myCrudAppTraining.entity.PhoneNumber;
+import com.example.miperestoronin.myCrudAppTraining.entity.UserModel;
 import com.example.miperestoronin.myCrudAppTraining.service.PhoneService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.miperestoronin.myCrudAppTraining.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/phones")
 public class PhoneController {
 
-    @Autowired
-    private PhoneService phoneService;
+    private final PhoneService phoneService;
+    private final UserService userService; // ← поле добавлено
 
-    // Получить все номера
-    @GetMapping
-    public List<PhoneNumber> getAllPhones() {
-        return phoneService.getAllPhones();
+    // Конструктор с UserService
+    public PhoneController(PhoneService phoneService, UserService userService) {
+        this.phoneService = phoneService;
+        this.userService = userService; // ← внедрение
     }
 
-    // Получить номер по ID
     @GetMapping("/{id}")
-    public ResponseEntity<PhoneNumber> getPhoneById(@PathVariable Long id) {
-        return phoneService.getPhoneById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<PhoneNumberDto> getPhoneById(@PathVariable Long id) {
+        PhoneNumber phone = phoneService.getPhoneById(id)
+                .orElseThrow(() -> new RuntimeException("Phone not found"));
+        return ResponseEntity.ok(convertToDto(phone));
     }
 
-    // Добавить новый номер
     @PostMapping
-    public ResponseEntity<PhoneNumber> createPhone(@RequestBody PhoneNumber phoneNumber) {
-        PhoneNumber savedPhone = phoneService.savePhone(phoneNumber);
-        return ResponseEntity.ok(savedPhone);
+    public ResponseEntity<PhoneNumberDto> createPhone(@Valid @RequestBody CreatePhoneRequest request) {
+        PhoneNumber phone = new PhoneNumber();
+        phone.setNumber(request.getNumber());
+
+        if (request.getUserId() != null) {
+            UserModel user = userService.getUserById(request.getUserId())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            phone.setUser(user);
+        }
+
+        PhoneNumber saved = phoneService.savePhone(phone);
+        return ResponseEntity.ok(convertToDto(saved));
     }
 
-    // Обновить существующий номер
-    @PutMapping("/{id}")
-    public ResponseEntity<PhoneNumber> updatePhone(
-            @PathVariable Long id,
-            @RequestBody PhoneNumber updatedPhone) {
-        PhoneNumber phone = phoneService.updatePhone(id, updatedPhone);
-        if (phone != null) {
-            return ResponseEntity.ok(phone);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    // Удалить номер
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePhone(@PathVariable Long id) {
-        if (phoneService.deletePhone(id)) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    // Метод конвертации
+    private PhoneNumberDto convertToDto(PhoneNumber phone) {
+        PhoneNumberDto dto = new PhoneNumberDto();
+        dto.setId(phone.getId());
+        dto.setNumber(phone.getNumber());
+        dto.setUserId(phone.getUser() != null ? phone.getUser().getId() : null);
+        return dto;
     }
 }
