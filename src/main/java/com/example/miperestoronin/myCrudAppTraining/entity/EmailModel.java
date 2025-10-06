@@ -3,8 +3,11 @@ package com.example.miperestoronin.myCrudAppTraining.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "emails")
 public class EmailModel {
@@ -15,7 +18,6 @@ public class EmailModel {
 
     @Column(nullable = false)
     private String address;
-
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = true)

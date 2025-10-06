@@ -9,5 +9,5 @@ public class CreateEmailRequest {
     @Email
     private String address;
 
-    private Long userId; // ← Только ID, не объект!
+    private Long userId;
 }

@@ -1,9 +1,7 @@
 package com.example.miperestoronin.myCrudAppTraining.controller;
 
-import com.example.miperestoronin.myCrudAppTraining.dto.UserDto;
 import com.example.miperestoronin.myCrudAppTraining.entity.UserModel;
 import com.example.miperestoronin.myCrudAppTraining.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,27 +18,23 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserModel> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<List<UserModel>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserModel> getUserById(@PathVariable Long id) {
-        return userService.getUserById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @PostMapping
     public ResponseEntity<UserModel> createUser(@RequestBody UserModel user) {
-        UserModel saved = userService.createUser(user);
-        return ResponseEntity.ok(saved);
+        return ResponseEntity.ok(userService.createUser(user));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<UserModel> updateUser(@PathVariable Long id, @RequestBody UserModel userDetails) {
-        UserModel updated = userService.updateUser(id, userDetails);
-        return ResponseEntity.ok(updated);
+        return ResponseEntity.ok(userService.updateUser(id, userDetails));
     }
 
     @DeleteMapping("/{id}")

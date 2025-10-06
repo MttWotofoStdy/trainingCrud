@@ -1,12 +1,12 @@
 package com.example.miperestoronin.myCrudAppTraining.entity;
-
 import jakarta.persistence.*;
-import lombok.Data;
-
+import lombok.Getter;
+import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "users")
 public class UserModel {

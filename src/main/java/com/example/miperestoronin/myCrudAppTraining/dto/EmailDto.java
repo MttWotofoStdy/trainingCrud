@@ -6,5 +6,5 @@ import lombok.Data;
 public class EmailDto {
     private Long id;
     private String address;
-    private Long userId; // Только ID пользователя
+    private Long userId;
 }
